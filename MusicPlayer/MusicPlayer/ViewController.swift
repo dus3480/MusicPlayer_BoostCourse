@@ -27,6 +27,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.addViewsWithCode()
         self.initializePlayer()
     }
     
@@ -74,12 +75,78 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
         self.timer = nil
     }
     
-    func addViewWithCode() {
-        
+    func addViewsWithCode() {
+        self.addPlayPauseButton()
+        self.addTimeLabel()
+        self.addProgressSlider()
     }
     
     func addPlayPauseButton() {
+        let button = UIButton(type: .custom)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
+        self.view.addSubview(button)
+        
+        button.setImage(UIImage(named: "button_play"), for: .normal)
+        button.setImage(UIImage(named: "button_pause"), for: .selected)
+        
+        button.addTarget(self, action: #selector(self.touchUpPlayPauseButton(_:)), for: .touchUpInside)
+        
+        let centerX = button.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        let centerY = NSLayoutConstraint(item: button, attribute: .centerY, relatedBy: .equal, toItem: self.view, attribute: .centerY, multiplier: 0.8, constant: 0)
+        let width = button.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.5)
+        let ratio = button.heightAnchor.constraint(equalTo: button.widthAnchor, multiplier: 1)
+        
+        centerX.isActive = true
+        centerY.isActive = true
+        width.isActive = true
+        ratio.isActive = true
+        
+        self.playPauseButton = button
+    }
+    
+    func addTimeLabel() {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.view.addSubview(label)
+        label.textColor = .black
+        label.textAlignment = .center
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        
+        let centerX: NSLayoutConstraint
+        centerX = label.centerXAnchor.constraint(equalTo: self.playPauseButton.centerXAnchor)
+        
+        let top: NSLayoutConstraint
+        top = label.topAnchor.constraint(equalTo: self.playPauseButton.bottomAnchor, constant: 8)
+        
+        centerX.isActive = true
+        top.isActive = true
+        
+        self.timeLabel = label
+        self.updateTimeLabelText(time: 0)
+    }
+    
+    func addProgressSlider() {
+        let slider = UISlider()
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(slider)
+        
+        slider.minimumTrackTintColor = .red
+        slider.addTarget(self, action: #selector(self.sliderValueChanged(_:)), for: .valueChanged)
+        
+        let safeAreaGuide = self.view.safeAreaLayoutGuide
+        let centerX = slider.centerXAnchor.constraint(equalTo: self.timeLabel.centerXAnchor)
+        let top = slider.topAnchor.constraint(equalTo: self.timeLabel.bottomAnchor, constant: 8)
+        let leading = slider.leadingAnchor.constraint(equalTo: safeAreaGuide.leadingAnchor, constant: 16)
+        let trailing = slider.trailingAnchor.constraint(equalTo: safeAreaGuide.trailingAnchor, constant: -16)
+        
+        centerX.isActive = true
+        top.isActive = true
+        leading.isActive = true
+        trailing.isActive = true
+        
+        self.progressSlider = slider
     }
     
     @IBAction func touchUpPlayPauseButton(_ sender:UIButton) {
