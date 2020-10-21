@@ -175,7 +175,6 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
     func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
         
         guard let error = error else {
-            eprint("오디오 플레이어 디코드 오류발생")
             return
         }
         
